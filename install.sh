@@ -13,6 +13,11 @@ fi
 if ! command -v mise &>/dev/null; then
   echo "Installing mise..."
   brew install mise
+  mise use --global node@latest
+  mise use --global deno@latest
+
+  # https://docs.anthropic.com/ja/docs/claude-code/overview
+  npm install -g @anthropic-ai/claude-code
 fi
 
 # https://neovim.io/
