@@ -15,6 +15,7 @@ if ! command -v mise &>/dev/null; then
   brew install mise
   mise use --global node@latest
   mise use --global deno@latest
+  mise list
 
   # https://docs.anthropic.com/ja/docs/claude-code/overview
   npm install -g @anthropic-ai/claude-code
