@@ -9,10 +9,19 @@ if ! command -v gh &>/dev/null; then
   echo "[WARN] exec: gh auth login"
 fi
 
+if command -v asdf &>/dev/null; then
+  echo "[WARN] SHOULD UNINSTALL asdf"
+fi
+
 # https://mise.jdx.dev/getting-started.html
 if ! command -v mise &>/dev/null; then
   echo "Installing mise..."
   brew install mise
+  if ! grep -q 'eval "$(mise activate zsh)"' ~/.zshrc 2>/dev/null; then
+    echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
+  else
+    echo "[WARN] Activation command already exists in ~/.zshrc"
+  fi
   mise use --global node@latest
   mise use --global deno@latest
   mise list
