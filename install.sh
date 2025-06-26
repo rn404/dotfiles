@@ -20,7 +20,7 @@ if ! command -v mise &>/dev/null; then
   if ! grep -q 'eval "$(mise activate zsh)"' ~/.zshrc 2>/dev/null; then
     echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
   else
-    echo "Activation command already exists in ~/.zshrc"
+    echo "[WARN] Activation command already exists in ~/.zshrc"
   fi
   mise use --global node@latest
   mise use --global deno@latest
