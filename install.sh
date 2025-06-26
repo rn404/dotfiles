@@ -19,6 +19,11 @@ if ! command -v mise &>/dev/null; then
 
   # https://docs.anthropic.com/ja/docs/claude-code/overview
   npm install -g @anthropic-ai/claude-code
+
+  # https://github.com/google-gemini/gemini-cli
+  npm install -g @google/gemini-cli
+
+  npm ls -g
 fi
 
 # https://neovim.io/
