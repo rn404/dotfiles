@@ -35,6 +35,9 @@ if ! command -v mise &>/dev/null; then
   npm ls -g
 fi
 
+# https://obsidian.md/
+brew install --cask obsidian
+
 # https://neovim.io/
 if ! command -v nvim &>/dev/null; then
   echo "Installing Neovim..."
