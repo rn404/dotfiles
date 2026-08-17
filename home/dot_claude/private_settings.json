@@ -1,0 +1,10 @@
+{
+  "env": {},
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": [],
+  "hooks": {},
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "model": "opus"
+}

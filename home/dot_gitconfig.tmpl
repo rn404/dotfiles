@@ -1,0 +1,39 @@
+[user]
+	email = {{ .email }}
+	name = rn404
+	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
+[alias]
+	br = branch
+	co = checkout
+	cm = commit
+	st = status
+	sw = switch
+	# po = push origin
+	# poo = push origin HEAD
+	# poa = push origin --all
+	# pom = push origin master
+	# pou = push origin upstream
+	# pod = push origin develop
+	# pof = push origin feature
+[init]
+	defaultBranch = main
+[gpg]
+	format = ssh
+[commit]
+	# Sign only when the private signing key is present, so commits don't fail
+	# on machines/containers where the key hasn't been restored yet.
+	gpgsign = {{ if stat (joinPath .chezmoi.homeDir ".ssh/id_ed25519") }}true{{ else }}false{{ end }}
+[gpg "ssh"]
+	allowedSignersFile = {{ .chezmoi.homeDir }}/.ssh/allowed_signers
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+[include]
+	# マシン固有や業務固有の追加設定(リポジトリ外。無ければ git は無視する)。
+	# 業務環境では setup.sh の案内に従い、業務用の秘密ストアから
+	# email/name や includeIf 等を ~/.config/git/local.gitconfig に展開する。
+	# 公開リポジトリには業務設定を載せない。
+	path = {{ .chezmoi.homeDir }}/.config/git/local.gitconfig

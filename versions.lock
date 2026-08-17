@@ -1,0 +1,14 @@
+# versions.lock - baseline of managed tool versions.
+# Check drift : ./setup.sh doctor
+# Re-baseline : ./setup.sh doctor --record
+# Format      : <tool>=<version>  (mise runtimes prefixed 'mise:')
+chezmoi=2.70.5
+gh=2.89.0
+mise:deno=2.9.1
+mise:go=1.26.4
+mise:node=26.3.1
+mise:rust=stable
+mise=2025.11.1
+nvim=0.12.3
+ripgrep=15.1.0
+starship=1.24.0

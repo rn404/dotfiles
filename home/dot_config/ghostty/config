@@ -1,0 +1,8 @@
+font-family = "UDEV Gothic"
+shell-integration-features = no-cursor
+cursor-style = block
+cursor-style-blink = false
+working-directory = ~/Works/rn404/
+desktop-notifications = true
+visual-bell = false
+

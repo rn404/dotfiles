@@ -1,0 +1,7 @@
+# 対話シェル用の設定をドロップインで読み込む（~/.config/zsh/conf.d/*.zsh）
+for f in ~/.config/zsh/conf.d/*.zsh(N); do
+  source "$f"
+done
+
+eval "$(starship init zsh)"
+eval "$(mise activate zsh)"
