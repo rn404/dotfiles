@@ -84,6 +84,8 @@ chezmoi apply
 
 > なお `chezmoi status`/`diff` は**管理下ファイル**の差分しか見ない。「そもそも未追加のファイル」は `chezmoi unmanaged` で洗い出す。
 
+> `~/.claude/settings.json` はテンプレート(`private_settings.json.tmpl`)で、パスを `{{ .chezmoi.homeDir }}` に置き換えて公開している。`chezmoi add` で取り込まず、ソースを `chezmoi edit` で直す。Herdr のフックは `~/.claude/hooks/herdr-agent-state.sh` があるマシンでだけ有効になる。
+
 ### 他マシンで最新を受け取る(受け取り側のマシン上で実行)
 
 別のマシンに移り、そのマシン上で実行する。リモートのソースを取得して実ファイルへ反映する:
