@@ -1,0 +1,29 @@
+{
+  "env": {},
+  "attribution": {
+    "sessionUrl": false
+  },
+  "permissions": {
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f *)",
+      "Bash(git push origin --delete*)",
+      "Bash(git push * --delete*)",
+      "Bash(git branch -D*)",
+      "Bash(git branch --delete --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)"
+    ]
+  },
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": [],
+  "hooks": {{ if stat (joinPath .chezmoi.homeDir ".claude/hooks/herdr-agent-state.sh") }}{"SessionStart":[{"matcher":"^(startup|resume|clear|compact|fork)$","hooks":[{"type":"command","command":{{ printf "bash %s session" (joinPath .chezmoi.homeDir ".claude/hooks/herdr-agent-state.sh" | shellQuote) | toJson }},"timeout":10}]}]}{{ else }}{}{{ end }},
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "tui": "fullscreen",
+  "agentPushNotifEnabled": true,
+  "inputNeededNotifEnabled": true
+}
