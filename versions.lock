@@ -2,7 +2,7 @@
 # Check drift : ./setup.sh doctor
 # Re-baseline : ./setup.sh doctor --record
 # Format      : <tool>=<version>  (mise runtimes prefixed 'mise:')
-chezmoi=2.70.5
+chezmoi=2.74.0
 gh=2.89.0
 mise:deno=2.9.1
 mise:go=1.26.4
