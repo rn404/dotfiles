@@ -59,8 +59,16 @@ ensure_homebrew() {
   have brew && return
   info "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  # NOTE: Apple Silicon path. Intel(/usr/local) guard TBD.
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  # Apple Silicon installs to /opt/homebrew, Intel to /usr/local.
+  local brew_bin
+  for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [ -x "$brew_bin" ]; then
+      eval "$("$brew_bin" shellenv)"
+      return
+    fi
+  done
+  warn "Homebrew was installed but brew was not found in the expected paths."
+  return 1
 }
 
 ensure_xcode_clt() {
