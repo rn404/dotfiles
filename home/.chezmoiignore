@@ -1,0 +1,22 @@
+# chezmoi が管理しない対象（destディレクトリ=~ からの相対パス）
+# LazyVim スターター由来の不要物。再取り込み(chezmoi add)時の混入も防ぐ。
+.config/nvim/LICENSE
+.config/nvim/README.md
+
+# Claude Code — WHITELIST (fail-safe): ignore every direct child of ~/.claude,
+# then re-include only what we deliberately manage. Any new/unknown top-level
+# entry (including future secrets like .credentials.json, or state dirs) is
+# excluded by default.
+.claude/*
+!.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/commands
+!.claude/skills
+# top-level auth/state files (not under .claude/) are never managed
+.claude.json
+.claude.json.backup
+
+# Codex — WHITELIST (fail-safe): ~/.codex holds auth.json and session state.
+# Manage only the symlink to the shared agent instructions.
+.codex/*
+!.codex/AGENTS.md
