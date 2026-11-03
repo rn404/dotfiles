@@ -186,30 +186,53 @@ restore_personal_key() {
   fi
 
   # This function runs on the left of "||" in `all`, where set -e is disabled,
-  # so every failure is handled explicitly. The existing key is replaced only
-  # after the fetched key has been validated.
+  # so every failure is handled explicitly. All files are prepared first, and
+  # an existing different key is kept as a backup before it is replaced.
   mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh" || return 1
-  local tmp_key pubkey email keyblob
-  tmp_key="$(mktemp "$HOME/.ssh/.id_ed25519.XXXXXX")" || return 1
-  if ! bw get notes ssh-personal --session "$BW_SESSION" > "$tmp_key" \
-     || ! pubkey="$(ssh-keygen -y -f "$tmp_key")"; then
-    rm -f "$tmp_key"
+  local key="$HOME/.ssh/id_ed25519" tmp_dir pubkey email backup=""
+  tmp_dir="$(mktemp -d "$HOME/.ssh/.restore.XXXXXX")" || return 1
+  if ! bw get notes ssh-personal --session "$BW_SESSION" > "$tmp_dir/key" \
+     || ! chmod 600 "$tmp_dir/key" \
+     || ! pubkey="$(ssh-keygen -y -f "$tmp_dir/key")"; then
+    rm -rf "$tmp_dir"
     warn "Could not fetch a valid key from Bitwarden. Existing key left untouched."
     return 1
   fi
   if ! email="$(chezmoi execute-template '{{ .email }}' 2>/dev/null)" || [ -z "$email" ]; then
-    rm -f "$tmp_key"
+    rm -rf "$tmp_dir"
     warn "Could not read email from the chezmoi config. Existing key left untouched."
     return 1
   fi
-  mv "$tmp_key" "$HOME/.ssh/id_ed25519" || { rm -f "$tmp_key"; return 1; }
 
-  # Regenerate the public key and allowed_signers from the private key
+  # The public key and allowed_signers are regenerated from the private key
   # (these are deliberately NOT committed to the public repo).
-  keyblob="$(printf '%s\n' "$pubkey" | awk '{print $2}')"
-  printf '%s\n' "$pubkey" > "$HOME/.ssh/id_ed25519.pub" || return 1
-  chmod 644 "$HOME/.ssh/id_ed25519.pub" || return 1
-  printf '%s ssh-ed25519 %s\n' "$email" "$keyblob" > "$HOME/.ssh/allowed_signers" || return 1
+  local key_type key_blob
+  read -r key_type key_blob _ <<< "$pubkey"
+  if ! printf '%s\n' "$pubkey" > "$tmp_dir/pub" \
+     || ! chmod 644 "$tmp_dir/pub" \
+     || ! printf '%s %s %s\n' "$email" "$key_type" "$key_blob" > "$tmp_dir/signers"; then
+    rm -rf "$tmp_dir"
+    warn "Could not prepare key files. Existing key left untouched."
+    return 1
+  fi
+
+  if [ -e "$key" ] && ! cmp -s "$key" "$tmp_dir/key"; then
+    backup="$key.bak-$(date +%Y%m%d%H%M%S)"
+    if ! cp -p "$key" "$backup"; then
+      rm -rf "$tmp_dir"
+      warn "Could not back up the existing key. Existing key left untouched."
+      return 1
+    fi
+  fi
+  if ! mv "$tmp_dir/key" "$key" \
+     || ! mv "$tmp_dir/pub" "$key.pub" \
+     || ! mv "$tmp_dir/signers" "$HOME/.ssh/allowed_signers"; then
+    rm -rf "$tmp_dir"
+    warn "Key restore did not finish.${backup:+ Previous key saved at: $backup}"
+    return 1
+  fi
+  rm -rf "$tmp_dir"
+  [ -z "$backup" ] || warn "Previous key saved at: $backup"
 
   # .gitconfig enables commit signing only when the key exists; re-render it.
   chezmoi apply "$HOME/.gitconfig" || warn "Could not refresh .gitconfig. Run: chezmoi apply ~/.gitconfig"
