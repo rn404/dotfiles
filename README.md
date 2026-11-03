@@ -22,7 +22,7 @@ chezmoi 本体の設定(`~/.config/chezmoi/chezmoi.toml`)は各マシンにロ�
 ## 新しいマシンでのセットアップ
 
 ```sh
-git clone git@github.com:rn404/dotfiles.git ~/Works/rn404/dotfiles
+git clone https://github.com/rn404/dotfiles.git ~/Works/rn404/dotfiles
 cd ~/Works/rn404/dotfiles
 
 # 共通セットアップ一式(Homebrew/apt → dotfiles 反映 → CLI ツール導入)
@@ -32,6 +32,8 @@ cd ~/Works/rn404/dotfiles
 export BW_SESSION="$(bw unlock --raw)"
 ./setup.sh all --with-personal-key
 ```
+
+鍵を用意する前でも取得できるよう、最初は HTTPS で clone する。このマシンから push するときは `git remote set-url origin git@github.com:rn404/dotfiles.git` で切り替える。
 
 業務環境では、上記に加えて業務用設定の展開が必要になる(後述の「業務環境でのセットアップ」)。
 
