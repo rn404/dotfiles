@@ -177,18 +177,34 @@ restore_personal_key() {
     return 1
   fi
 
-  mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
-  bw get notes ssh-personal --session "$BW_SESSION" > "$HOME/.ssh/id_ed25519"
-  chmod 600 "$HOME/.ssh/id_ed25519"
+  # This function runs on the left of "||" in `all`, where set -e is disabled,
+  # so every failure is handled explicitly. The existing key is replaced only
+  # after the fetched key has been validated.
+  mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh" || return 1
+  local tmp_key pubkey email keyblob
+  tmp_key="$(mktemp "$HOME/.ssh/.id_ed25519.XXXXXX")" || return 1
+  if ! bw get notes ssh-personal --session "$BW_SESSION" > "$tmp_key" \
+     || ! pubkey="$(ssh-keygen -y -f "$tmp_key")"; then
+    rm -f "$tmp_key"
+    warn "Could not fetch a valid key from Bitwarden. Existing key left untouched."
+    return 1
+  fi
+  if ! email="$(chezmoi execute-template '{{ .email }}' 2>/dev/null)" || [ -z "$email" ]; then
+    rm -f "$tmp_key"
+    warn "Could not read email from the chezmoi config. Existing key left untouched."
+    return 1
+  fi
+  mv "$tmp_key" "$HOME/.ssh/id_ed25519" || { rm -f "$tmp_key"; return 1; }
 
   # Regenerate the public key and allowed_signers from the private key
   # (these are deliberately NOT committed to the public repo).
-  ssh-keygen -y -f "$HOME/.ssh/id_ed25519" > "$HOME/.ssh/id_ed25519.pub"
-  chmod 644 "$HOME/.ssh/id_ed25519.pub"
-  local email keyblob
-  email="$(chezmoi execute-template '{{ .email }}' 2>/dev/null)"
-  keyblob="$(ssh-keygen -y -f "$HOME/.ssh/id_ed25519" | awk '{print $2}')"
-  printf '%s ssh-ed25519 %s\n' "$email" "$keyblob" > "$HOME/.ssh/allowed_signers"
+  keyblob="$(printf '%s\n' "$pubkey" | awk '{print $2}')"
+  printf '%s\n' "$pubkey" > "$HOME/.ssh/id_ed25519.pub" || return 1
+  chmod 644 "$HOME/.ssh/id_ed25519.pub" || return 1
+  printf '%s ssh-ed25519 %s\n' "$email" "$keyblob" > "$HOME/.ssh/allowed_signers" || return 1
+
+  # .gitconfig enables commit signing only when the key exists; re-render it.
+  chezmoi apply "$HOME/.gitconfig" || warn "Could not refresh .gitconfig. Run: chezmoi apply ~/.gitconfig"
 
   ok "Personal SSH key restored (id_ed25519 / .pub / allowed_signers)"
 }
