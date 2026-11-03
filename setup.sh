@@ -149,8 +149,13 @@ install_tools() {
   info "Installing tools declared in mise config (node/deno/go/rust, etc.)..."
   mise install
 
+  info "Installing Claude Code (native installer, auto-updates itself)..."
+  if ! have claude; then
+    curl -fsSL https://claude.ai/install.sh | bash || warn "Failed to install Claude Code."
+  fi
+
   info "Installing global npm tools..."
-  if ! mise exec -- npm install -g @anthropic-ai/claude-code @google/gemini-cli; then
+  if ! mise exec -- npm install -g @google/gemini-cli; then
     warn "Failed to install global npm tools. Re-run after restarting your shell."
   fi
 
