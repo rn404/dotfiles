@@ -1,0 +1,13 @@
+onboarding = false
+
+[theme]
+name = "tokyo-night-day"
+auto_switch = false
+
+# Vim-like layout. Only overrides of Herdr defaults are listed;
+# prefix (ctrl+b), split_vertical (prefix+v) and focus_pane_* (prefix+hjkl) are defaults.
+[keys]
+split_horizontal = "prefix+s" # was prefix+minus; like :split
+close_pane = "prefix+c"       # was prefix+x
+new_tab = "prefix+t"          # was prefix+c; moved to free prefix+c
+settings = "prefix+comma"     # was prefix+s; moved to free prefix+s
