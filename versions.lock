@@ -3,12 +3,12 @@
 # Re-baseline : ./setup.sh doctor --record
 # Format      : <tool>=<version>  (mise runtimes prefixed 'mise:')
 chezmoi=2.74.0
-gh=2.89.0
+gh=2.103.3
 mise:deno=2.9.1
 mise:go=1.26.4
 mise:node=26.3.1
 mise:rust=stable
-mise=2025.11.1
-nvim=0.12.3
-ripgrep=15.1.0
-starship=1.24.0
+mise=2026.10.25
+nvim=0.12.6
+ripgrep=15.2.0
+starship=1.27.0
