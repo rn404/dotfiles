@@ -15,3 +15,8 @@
 # top-level auth/state files (not under .claude/) are never managed
 .claude.json
 .claude.json.backup
+
+# Codex — WHITELIST (fail-safe): ~/.codex holds auth.json and session state.
+# Manage only the symlink to the shared agent instructions.
+.codex/*
+!.codex/AGENTS.md

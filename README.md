@@ -86,6 +86,10 @@ chezmoi apply
 
 > `~/.claude/settings.json` はテンプレート(`private_settings.json.tmpl`)で、パスを `{{ .chezmoi.homeDir }}` に置き換えて公開している。`chezmoi add` で取り込まず、ソースを `chezmoi edit` で直す。Herdr のフックは `~/.claude/hooks/herdr-agent-state.sh` があるマシンでだけ有効になる。
 
+### エージェント共通の指示
+
+共通の指示は `~/.config/agents/AGENTS.md` を正本にする。Claude Code は `~/.claude/CLAUDE.md` の `@` で取り込み、Codex は `~/.codex/AGENTS.md` のシンボリックリンクで読む。Claude Code 専用の指示だけを `~/.claude/CLAUDE.md` に書く。
+
 ### 他マシンで最新を受け取る(受け取り側のマシン上で実行)
 
 別のマシンに移り、そのマシン上で実行する。リモートのソースを取得して実ファイルへ反映する:
